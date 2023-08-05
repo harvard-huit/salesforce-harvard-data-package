@@ -1,0 +1,16 @@
+{
+  "packageDirectories": [
+    {
+      "path": "force-app",
+      "default": true,
+      "package": "hud",
+      "versionName": "v1.0",
+      "versionNumber": "1.0.0",
+      "dependencies": []    
+    }
+  ],
+  "name": "hud",
+  "namespace": "HUD",
+  "sfdcLoginUrl": "https://login.salesforce.com",
+  "sourceApiVersion": "57.0"
+}

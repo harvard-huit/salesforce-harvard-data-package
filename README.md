@@ -1,31 +1,218 @@
-# Salesforce DX Project: Harvard Data
+# Salesforce DX Project: hud
 
-This app is the staging package / app for data integration with Harvard Central systems, such as the Person Data Service (PDS).
+This repository should get you set up with being able to deploy the hud package. This package relies on data from the (HUIT/salesforce-person-updates)[] project. 
+
+<details>
+<summary>Old HUDA and EDA Information</summary>
+
+Please see [this project](https://github.huit.harvard.edu/HUIT/salesforce-huda-package) for more information on HUDA and EDA, the precuror packages to this.
+
+</details>
+
+## Namespace: `huit`
+
+The Namespace Org is a Developer Org that controls the use of the `huit` namespace, which is a prefix added to all custom components (objects, classes, fields, etc) contained in the package. 
+
+This cannot be (easily) transferred to other orgs and only one namespace can be assigned to each org.
+
+This also cannot also act as a Dev Hub for package management and development. It is impossible to assingn a namespace and enable Dev Hub settings on the same org. Both are needed for development.
+
+### Namespace Details
+
+Host: `harvarduniversity68-dev-ed.develop.lightning.force.com`
+User: `huit_namespace@harvard.edu`
+
+## Dev Hub
+
+TODO: fill in details on dev hub
+
+## Development Setup Steps
+
+NOTE: This is a "second generation package", which generally means development and deployment are done through the sfdc-cli, available here: [https://developer.salesforce.com/docs/atlas.en-us.sfdx_setup.meta/sfdx_setup/sfdx_setup_install_cli.htm]
+
+NOTE: You can see what orgs your sfdx environment is currently using with `sf org:list`. That will show your dev hub and any sandboxes or scratch orgs. 
+
+### 1. Create a Dev Hub from a Developer org
+  a. sign up for a developer org, these are free and unaffiliated with your other orgs
+  b. turn on Dev Hub under settings -> Development -> Dev Hub
+  c. wait like 20 minutes
+
+### 2. Register the Namespace
+
+This is only needed if the project uses a namespace -- the HUDA project does use the HUDA namespace. 
+  a. log in to the Dev Hub Developer Org
+  b. navigate to the Namespace Registry (this will only show if the Dev Hub is enabled and you've waited long enough)
+  c. Link Namespace and log in to a registry holder, in this case it would be the `hudapackage1@harvard.edu` (or another linked account) user and accept
+
+### 3. Create a scratch org
+  a. designate a dev hub
+    ```
+    sfdx org:login:web -d -a DevHub
+    ```
+    The dev hub should be a Developer Org. It can't be a sandbox. 
+
+    Note: you can use `sfdx org:list` to see what you currently have available. You should see a `(D)` next to the Dev Hub you've logged in to.
+
+  b. create a new local project (or use an existing one (like this project) and skip this)
+    ```
+    sfdx force:project:create -n "name of project"
+    ```
+
+  c. create scratch org
+    ```
+    sf org:create:scratch -f config/project-scratch-def.json -a HarvardDataScratch
+    ```
+
+    Note: this can take 2-10 minutes
+    
+### Generate or display a password 
+    This may be needed to log into a scratch org, but is not strictly necessay. (`sf org:open` should also be usable for this)
+    ```
+    sf force:user:password:generate --target-org HarvardDataScratch
+    ```
+
+    You can also get the password if it exists with:
+    ```
+    sf org:display -target-org <username or alias of scratch org>
+    ```
+
+### 4. Install HUDA from your local to your scratch org:
+    ```
+    sf project:deploy:start --sourcepath . --targetusername <org username or alias>
+    ```
+    This will move all of the meta data and create the objects/classes over as though it was installed. 
+
+    This is the way things get compiled, you'll get the compile errors from doing this and be able to debug (if there are any). 
+
+    You can check what packages are installed in the org with this command:
+    ```
+    sf package:installed:list --target-org HarvardDataScratch
+    ```
+
+    You may need to delete the existing huda due to conflicts. This is best done through the Salesforce interface, settings -> installed packages, but you can use:
+    ```
+    sf package:uninstall --target-org HarvardDataScratch --pacakge <package id>
+    ```
+
+#### Error with installing packages: `resource not found`
+
+"Enable Unlocked Packages and Second-Generation Managed Packages" is an option under "enable dev hub" and must be selected for any package management to work from `sfdx`. An `sfdx` package is considered a 2nd gen managed package.
 
 
-## Development Help
 
-This uses the Salesforce DX development paradigm. We will be using the `sfdx` command line interface: [https://developer.salesforce.com/tools/sfdxcli]
+### 5. Create versioned package:
+    A versioned package will push the package to a salesforce cloud location that can be retrieved by consumers with a link.
+
+    ```
+    sf package:version:create --path force-app --installation-key test1234 --wait 10 --target-dev-hub DevHub
+    ```
+    ```
+    sf package:version:create --path force-app --installation-key-bypass --wait 10 --target-dev-hub DevHub
+    ```
 
 
-### Create a scratch org
 
-You can either do development in a scratch org or in a sandbox. In order to create a scratch org, you need to have enabled a dev hub in a paid Salesforce Org. 
+    NOTE: the installation key is a password added to the package so not anyone can install it. 
 
-Under settings, search for `dev hub` in the filter. If it's not there, it's probably because you're trying to do it from a sandbox -- you can't make a sandbox into a dev hub. Once there, just click the enable. (Ignore the warning that says you can't undo it, I'm sure that won't have any consequences.)
+    This can then be installed using the link that is given to you, something like: 
+    ```
+    https://test.salesforce.com/packaging/installPackage.apexp?p0=04t3s000002zlI8
+    ```
 
-Log in to the dev hub with:
+
+#### Create an unlocked package
+
+You can also create an "unlocked" package. These are useful as they allow people to meddle with them. Deployed versions allow you to view and change the Apex code. They are not namespaced though. 
+
 ```
-sfdx auth:web:login -d -a DevHub
+sf package:create --name HUDA --description "Huda Unlocked" --package-type Unlocked --path force-app --target-dev-hub DevHub
 ```
-That will open your browser. Just log in to the org that you enabled the dev hub on. 
+
+That package can then be seen by doing a `sf package:list` command and it can be deployed with:
+```
+sf package:install --package 0HoXXXXXXXXXXX --target-org HarvardDataScratch
+```
 
 
-Then you can actually create the scratch org using the scratch definition in this repository.
+#### Create a Managed package
+
+A managed package created this way (without versioning it) will create a reference to a package that won't be available through Salesforce. It will need to be deployed through sfdx commands. (`sf package:install`)
+
 ```
-sfdx force:org:create -s -f config/project-scratch-def.json -a HarvardDataScratch
+sfdx package:create --name HUDA --description "Huda Managed" --path force-app --package-type Managed --target-dev-hub DevHub
 ```
-This can take a few minutes. Be patient.
+
+#### Get the package id
+```
+sf package:list
+```
+
+## Dependencies
+
+We're not using any dependencies currently, but if we need to add some in the future, this section exists. 
+
+<!-- 
+NO. This is not right:
+
+If you have a dependency (like EDA), you need to retrieve the metadata for that dependency from an existing org and it needs to be in the source. 
+
+ - Get the EDA metadata from an org that has it installed:
+ ```
+ sf project:retrieve:start --package-name EDA --target-org DevHub
+ ```
+
+ - Create a package from that metadata:
+ ```
+ sf package:create --name eda --description "EDA" --package-type Unlocked --path force-app --target-dev-hub DevHub
+ ``` -->
+
+If you don't have the package id, you can get the package id from an org:
+```
+sf package:installed:list --target-org DevHub
+```
+
+Then add the `04t` package id to the aliases in the project config, an example would be how the old HUDA looked: 
+
+```
+{
+  "packageDirectories": [
+    {
+      "path": "force-app",
+      "default": true,
+      "package": "huda",
+      "versionName": "v2.0",
+      "versionNumber": "2.0.NEXT",
+      "dependencies": [
+        {
+          "package": "EDA"
+        }
+      ]    
+    }
+  ],
+  "name": "huda",
+  "namespace": "HUDA",
+  "sfdcLoginUrl": "https://login.salesforce.com",
+  "sourceApiVersion": "57.0",
+  "packageAliases": {
+    "EDA": "04t1R0000016bHcQAI",
+    "huda": "0HoDp000000fxZhKAI",
+    "huda@2.0": "04t3s000002zlI8"
+  }
+}
+```
+The two parts that are important are:
+ - the dependencies, with the package "name"
+ - the package Aliases, that define the exact version id of the package
+
+
+## Permset (if relevant)
+
+TODO: come back to this!
+
+```
+sf force:user:permset:assign --perm-set-name huda
+```
+
 
 
 ## More Help
