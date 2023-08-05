@@ -19,12 +19,13 @@ This also cannot also act as a Dev Hub for package management and development. I
 
 ### Namespace Details
 
-Host: `harvarduniversity68-dev-ed.develop.lightning.force.com`
+Host: `harvarduniversity68-dev-ed.develop.my.salesforce.com`
 User: `huit_namespace@harvard.edu`
 
 ## Dev Hub
 
-TODO: fill in details on dev hub
+Host: `https://harvarduniverstiy-dev-ed.develop.my.salesforce.com`
+User: `hud_package@harvard.edu`
 
 ## Development Setup Steps
 
@@ -65,7 +66,7 @@ This is only needed if the project uses a namespace -- the HUDA project does use
 
     Note: this can take 2-10 minutes
     
-### Generate or display a password 
+### Generate or display a password (optional)
     This may be needed to log into a scratch org, but is not strictly necessay. (`sf org:open` should also be usable for this)
     ```
     sf force:user:password:generate --target-org HarvardDataScratch
@@ -76,7 +77,7 @@ This is only needed if the project uses a namespace -- the HUDA project does use
     sf org:display -target-org <username or alias of scratch org>
     ```
 
-### 4. Install HUDA from your local to your scratch org:
+### 4. Install HUD from your local to your scratch org:
     ```
     sf project:deploy:start --sourcepath . --targetusername <org username or alias>
     ```
@@ -89,7 +90,7 @@ This is only needed if the project uses a namespace -- the HUDA project does use
     sf package:installed:list --target-org HarvardDataScratch
     ```
 
-    You may need to delete the existing huda due to conflicts. This is best done through the Salesforce interface, settings -> installed packages, but you can use:
+    You may need to delete the existing hud due to conflicts. This is best done through the Salesforce interface, settings -> installed packages, but you can use:
     ```
     sf package:uninstall --target-org HarvardDataScratch --pacakge <package id>
     ```
@@ -98,9 +99,81 @@ This is only needed if the project uses a namespace -- the HUDA project does use
 
 "Enable Unlocked Packages and Second-Generation Managed Packages" is an option under "enable dev hub" and must be selected for any package management to work from `sfdx`. An `sfdx` package is considered a 2nd gen managed package.
 
+<details>
+<summary>Create an unlocked package</summary>
+
+You can also create an "unlocked" package. These are useful as they allow people to meddle with them a little more freely. Deployed versions allow you to view and change the Apex code. They are not namespaced and this is mostly just a way to do debugging in development. 
+
+```
+sf package create --name HUD --description "HUD Unlocked" --package-type Unlocked --path force-app --target-dev-hub DevHub
+```
+
+That package can then be seen by doing a `sf package:list` command and it can be deployed with:
+```
+sf package install --package 0HoXXXXXXXXXXX --target-org HarvardDataScratch
+```
+</details>
+
+## Deployment Instructions
+
+<details>
+<summary>Create an *Unversioned* Managed package</summary>
+
+This is generally unnecessay.
+
+A managed package created this way (without versioning it) will create a reference to a package that won't be available through Salesforce. This package cannot be installed, but is needed as a base package for further versioned packages. This was only needed the first time the package was created and as long as you have access to the Dev Hub it was assigned to, you shouldn't need to do it again.
+
+```
+sf package create --name HUD --description "HUD Managed" --path force-app --package-type Managed --target-dev-hub DevHub
+```
+</details>
+
+### Get the current package id
+
+The package id will be returned immediately when you create a version, but you can get it with:
+```
+sf package list
+```
 
 
-### 5. Create versioned package:
+### Ancestors
+
+When making a new version to this package, ancestors should be used if at all possible. 
+
+<details>
+<summary>Ancestors Details</summary>
+
+Using `ancestorVersion` and setting it to "HIGHEST" is the preferrable way to declare a new version. However, if that does not work, you can use `ancestorId` and set it to the alias listed in `packageAliases` (or the direct `04t` id, but aliasing is preferred). 
+
+```
+{
+  "packageDirectories": [
+    {
+      "path": "force-app",
+      "default": true,
+      "package": "hud",
+      "versionName": "v2.0",
+      "versionNumber": "2.0.NEXT",
+      "ancestorVersion": "HIGHEST"
+    }
+  ],
+  "name": "HUD",
+  "namespace": "huit",
+  "sfdcLoginUrl": "https://login.salesforce.com",
+  "sourceApiVersion": "57.0",
+  "packageAliases": {
+    "hud": "0Ho12345677ABC",
+    "hud@1.0": "04t123456778ABC"
+    "hud@2.0": "04t123453453ABC"
+  }
+}
+```
+
+
+</details>
+
+
+### Creating a (Beta) Versioned Package:
     A versioned package will push the package to a salesforce cloud location that can be retrieved by consumers with a link.
 
     ```
@@ -110,61 +183,24 @@ This is only needed if the project uses a namespace -- the HUDA project does use
     sf package:version:create --path force-app --installation-key-bypass --wait 10 --target-dev-hub DevHub
     ```
 
-
+    This can take up to 10 minutes.
 
     NOTE: the installation key is a password added to the package so not anyone can install it. 
 
     This can then be installed using the link that is given to you, something like: 
     ```
-    https://test.salesforce.com/packaging/installPackage.apexp?p0=04t3s000002zlI8
+    https://test.salesforce.com/packaging/installPackage.apexp?p0=04t12345678lI8
     ```
 
 
-#### Create an unlocked package
-
-You can also create an "unlocked" package. These are useful as they allow people to meddle with them. Deployed versions allow you to view and change the Apex code. They are not namespaced though. 
-
-```
-sf package:create --name HUDA --description "Huda Unlocked" --package-type Unlocked --path force-app --target-dev-hub DevHub
-```
-
-That package can then be seen by doing a `sf package:list` command and it can be deployed with:
-```
-sf package:install --package 0HoXXXXXXXXXXX --target-org HarvardDataScratch
-```
-
-
-#### Create a Managed package
-
-A managed package created this way (without versioning it) will create a reference to a package that won't be available through Salesforce. It will need to be deployed through sfdx commands. (`sf package:install`)
-
-```
-sfdx package:create --name HUDA --description "Huda Managed" --path force-app --package-type Managed --target-dev-hub DevHub
-```
-
-#### Get the package id
-```
-sf package:list
-```
-
 ## Dependencies
 
-We're not using any dependencies currently, but if we need to add some in the future, this section exists. 
+We're not using any dependencies currently, but if we need to add some in the future, this section exists. Dependencies can be used to add fields to other packages.
 
-<!-- 
-NO. This is not right:
+They can also be used to extend this package if the Dev Hub is somehow lost, although ancestors should be used when making changes to this/any package. 
 
-If you have a dependency (like EDA), you need to retrieve the metadata for that dependency from an existing org and it needs to be in the source. 
-
- - Get the EDA metadata from an org that has it installed:
- ```
- sf project:retrieve:start --package-name EDA --target-org DevHub
- ```
-
- - Create a package from that metadata:
- ```
- sf package:create --name eda --description "EDA" --package-type Unlocked --path force-app --target-dev-hub DevHub
- ``` -->
+<details>
+<summary>Dependency Info</summary>
 
 If you don't have the package id, you can get the package id from an org:
 ```
@@ -179,7 +215,7 @@ Then add the `04t` package id to the aliases in the project config, an example w
     {
       "path": "force-app",
       "default": true,
-      "package": "huda",
+      "package": "hud",
       "versionName": "v2.0",
       "versionNumber": "2.0.NEXT",
       "dependencies": [
@@ -189,20 +225,23 @@ Then add the `04t` package id to the aliases in the project config, an example w
       ]    
     }
   ],
-  "name": "huda",
-  "namespace": "HUDA",
+  "name": "HUD",
+  "namespace": "huit",
   "sfdcLoginUrl": "https://login.salesforce.com",
   "sourceApiVersion": "57.0",
   "packageAliases": {
     "EDA": "04t1R0000016bHcQAI",
-    "huda": "0HoDp000000fxZhKAI",
-    "huda@2.0": "04t3s000002zlI8"
+    "hud": "0HoDp000000fxZhKAI",
+    "hud@2.0": "04t3s000002zlI8"
   }
 }
 ```
 The two parts that are important are:
  - the dependencies, with the package "name"
  - the package Aliases, that define the exact version id of the package
+
+
+</details>
 
 
 ## Permset (if relevant)

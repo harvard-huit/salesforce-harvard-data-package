@@ -3,14 +3,19 @@
     {
       "path": "force-app",
       "default": true,
-      "package": "hud",
-      "versionName": "v1.0",
-      "versionNumber": "1.0.0",
-      "dependencies": []    
+      "package": "HUD",
+      "versionName": "ver 0.1",
+      "versionNumber": "0.1.0.NEXT",
+      "dependencies": [],
+      "versionDescription": "HUD Managed"
     }
   ],
-  "name": "hud",
-  "namespace": "HUD",
+  "name": "HUD",
+  "namespace": "huit",
   "sfdcLoginUrl": "https://login.salesforce.com",
-  "sourceApiVersion": "57.0"
+  "sourceApiVersion": "58.0",
+  "packageAliases": {
+    "HUD": "0HoHn000000PAwZKAW",
+    "HUD@0.1.0-1": "04tHn000000yVzTIAU"
+  }
 }
