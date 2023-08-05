@@ -3,20 +3,14 @@
     <fields>
         <fullName>Pronouns__c</fullName>
         <externalId>false</externalId>
-        <label>HU Pronouns</label>
+        <label>HUIT Pronouns</label>
         <length>255</length>
         <type>Text</type>
     </fields>
     <fields>
-        <fullName>Datetime__c</fullName>
-        <externalId>false</externalId>
-        <label>Datetime</label>
-        <type>DateTime</type>
-    </fields>
-    <fields>
         <fullName>Fetch_Fail__c</fullName>
         <externalId>false</externalId>
-        <label>HU Fetch Fail</label>
+        <label>HUIT Fetch Fail</label>
         <inlineHelpText>This will be checked if HUD returned no data for this record.</inlineHelpText>
         <type>Checkbox</type>
         <defaultValue>false</defaultValue>

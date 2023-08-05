@@ -1,6 +1,8 @@
-# Salesforce DX Project: hud
+# Salesforce DX Project: Harvard University Data (HUD)
 
-This repository should get you set up with being able to deploy the hud package. This package relies on data from the (HUIT/salesforce-person-updates)[] project. 
+This is a Salesforce Second Generation Package. It is meant to be a package to help pattern how University data is stored in various Salesforce instances around the University.
+
+This repository should get you set up with being able to deploy the HUD package. This package does NOT deliver data. It relies on data to be pushed from the [HUIT/salesforce-person-updates](https://github.huit.harvard.edu/HUIT/salesforce-person-updates) project.
 
 <details>
 <summary>Old HUDA and EDA Information</summary>
@@ -16,6 +18,13 @@ The Namespace Org is a Developer Org that controls the use of the `huit` namespa
 This cannot be (easily) transferred to other orgs and only one namespace can be assigned to each org.
 
 This also cannot also act as a Dev Hub for package management and development. It is impossible to assingn a namespace and enable Dev Hub settings on the same org. Both are needed for development.
+
+<details>
+<summary>Note on Namespace and Package case</summary>
+
+There is no defined best practice for case on either namespace or package, however the choices were made based on what the general population seems to be using. For Namespaces, Salesforce documentation (and the majority of existing namespaces) go with lowercase and for Packages, documentation tends to go with CamelCase. Since "HUD" is an acronym, it made sense to make it all caps. 
+
+</details>
 
 ### Namespace Details
 
@@ -110,7 +119,7 @@ sf package create --name HUD --description "HUD Unlocked" --package-type Unlocke
 
 That package can then be seen by doing a `sf package:list` command and it can be deployed with:
 ```
-sf package install --package 0HoXXXXXXXXXXX --target-org HarvardDataScratch
+sf package install --package 0Ho... --target-org HarvardDataScratch
 ```
 </details>
 
@@ -130,11 +139,14 @@ sf package create --name HUD --description "HUD Managed" --path force-app --pack
 
 ### Get the current package id
 
-The package id will be returned immediately when you create a version, but you can get it with:
+This command will query what's on your (default) Dev Hub. You can use it to make sure the ancestors in your `packageAliases` match up to what's on the Dev Hub. They don't have to all match up, just the ones referenced in the packages/ancestors.
 ```
 sf package list
 ```
-
+and
+```
+sf package version list
+```
 
 ### Ancestors
 
@@ -162,9 +174,9 @@ Using `ancestorVersion` and setting it to "HIGHEST" is the preferrable way to de
   "sfdcLoginUrl": "https://login.salesforce.com",
   "sourceApiVersion": "57.0",
   "packageAliases": {
-    "hud": "0Ho12345677ABC",
-    "hud@1.0": "04t123456778ABC"
-    "hud@2.0": "04t123453453ABC"
+    "hud": "0Ho...",
+    "hud@1.0": "04t..."
+    "hud@2.0": "04t..."
   }
 }
 ```
@@ -177,21 +189,35 @@ Using `ancestorVersion` and setting it to "HIGHEST" is the preferrable way to de
     A versioned package will push the package to a salesforce cloud location that can be retrieved by consumers with a link.
 
     ```
-    sf package:version:create --path force-app --installation-key test1234 --wait 10 --target-dev-hub DevHub
+    sf package version create --path force-app --installation-key test1234 --wait 10 --target-dev-hub DevHub
     ```
     ```
-    sf package:version:create --path force-app --installation-key-bypass --wait 10 --target-dev-hub DevHub
+    sf package version create --path force-app --installation-key-bypass --wait 10 --target-dev-hub DevHub
     ```
 
     This can take up to 10 minutes.
 
-    NOTE: the installation key is a password added to the package so not anyone can install it. 
+    NOTE: the installation key is a password added to the package so not anyone can install it. We don't generally need to use it.
 
     This can then be installed using the link that is given to you, something like: 
     ```
-    https://test.salesforce.com/packaging/installPackage.apexp?p0=04t12345678lI8
+    https://test.salesforce.com/packaging/installPackage.apexp?p0=04t...
     ```
 
+#### Promote a Beta Version
+
+By default, creating a version results in a Beta (unreleased) version. Beta versions are not upgradable and must be deleted from the Salesforce instance in order to be changed. (Never install a Beta version in a production org.)
+
+In order to create a release version, after testing is done on the Beta version, use this command:
+```
+sf package version promote --package 04t...
+```
+
+### Updating the Package Description 
+
+```
+sf package update --description "Harvard University Data Package. Central IT (HUIT) delivered data." --package HUD
+```
 
 ## Dependencies
 
@@ -230,9 +256,9 @@ Then add the `04t` package id to the aliases in the project config, an example w
   "sfdcLoginUrl": "https://login.salesforce.com",
   "sourceApiVersion": "57.0",
   "packageAliases": {
-    "EDA": "04t1R0000016bHcQAI",
-    "hud": "0HoDp000000fxZhKAI",
-    "hud@2.0": "04t3s000002zlI8"
+    "EDA": "04t...",
+    "hud": "0Ho...",
+    "hud@2.0": "04t..."
   }
 }
 ```
@@ -242,16 +268,6 @@ The two parts that are important are:
 
 
 </details>
-
-
-## Permset (if relevant)
-
-TODO: come back to this!
-
-```
-sf force:user:permset:assign --perm-set-name huda
-```
-
 
 
 ## More Help
