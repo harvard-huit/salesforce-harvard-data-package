@@ -55,54 +55,54 @@ This is only needed if the project uses a namespace -- the HUDA project does use
   c. Link Namespace and log in to a registry holder, in this case it would be the `hudapackage1@harvard.edu` (or another linked account) user and accept
 
 ### 3. Create a scratch org
-  a. designate a dev hub
-    ```
-    sfdx org:login:web -d -a DevHub
-    ```
-    The dev hub should be a Developer Org. It can't be a sandbox. 
+a. designate a dev hub
+```
+sfdx org:login:web -d -a DevHub
+```
+The dev hub should be a Developer Org. It can't be a sandbox. 
 
-    Note: you can use `sfdx org:list` to see what you currently have available. You should see a `(D)` next to the Dev Hub you've logged in to.
+Note: you can use `sfdx org:list` to see what you currently have available. You should see a `(D)` next to the Dev Hub you've logged in to.
 
-  b. create a new local project (or use an existing one (like this project) and skip this)
-    ```
-    sfdx force:project:create -n "name of project"
-    ```
+b. create a new local project (or use an existing one (like this project) and skip this)
+```
+sfdx force:project:create -n "name of project"
+```
 
-  c. create scratch org
-    ```
-    sf org:create:scratch -f config/project-scratch-def.json -a HarvardDataScratch
-    ```
+c. create scratch org
+```
+sf org:create:scratch -f config/project-scratch-def.json -a HarvardDataScratch
+```
 
-    Note: this can take 2-10 minutes
-    
+Note: this can take 2-10 minutes
+
 ### Generate or display a password (optional)
-    This may be needed to log into a scratch org, but is not strictly necessay. (`sf org:open` should also be usable for this)
-    ```
-    sf force:user:password:generate --target-org HarvardDataScratch
-    ```
+This may be needed to log into a scratch org, but is not strictly necessay. (`sf org:open` should also be usable for this)
+```
+sf force:user:password:generate --target-org HarvardDataScratch
+```
 
-    You can also get the password if it exists with:
-    ```
-    sf org:display -target-org <username or alias of scratch org>
-    ```
+You can also get the password if it exists with:
+```
+sf org:display -target-org <username or alias of scratch org>
+```
 
 ### 4. Install HUD from your local to your scratch org:
-    ```
-    sf project:deploy:start --sourcepath . --targetusername <org username or alias>
-    ```
-    This will move all of the meta data and create the objects/classes over as though it was installed. 
+```
+sf project:deploy:start --sourcepath . --targetusername <org username or alias>
+```
+This will move all of the meta data and create the objects/classes over as though it was installed. 
 
-    This is the way things get compiled, you'll get the compile errors from doing this and be able to debug (if there are any). 
+This is the way things get compiled, you'll get the compile errors from doing this and be able to debug (if there are any). 
 
-    You can check what packages are installed in the org with this command:
-    ```
-    sf package:installed:list --target-org HarvardDataScratch
-    ```
+You can check what packages are installed in the org with this command:
+```
+sf package:installed:list --target-org HarvardDataScratch
+```
 
-    You may need to delete the existing hud due to conflicts. This is best done through the Salesforce interface, settings -> installed packages, but you can use:
-    ```
-    sf package:uninstall --target-org HarvardDataScratch --pacakge <package id>
-    ```
+You may need to delete the existing hud due to conflicts. This is best done through the Salesforce interface, settings -> installed packages, but you can use:
+```
+sf package:uninstall --target-org HarvardDataScratch --pacakge <package id>
+```
 
 #### Error with installing packages: `resource not found`
 
@@ -186,23 +186,23 @@ Using `ancestorVersion` and setting it to "HIGHEST" is the preferrable way to de
 
 
 ### Creating a (Beta) Versioned Package:
-    A versioned package will push the package to a salesforce cloud location that can be retrieved by consumers with a link.
+A versioned package will push the package to a salesforce cloud location that can be retrieved by consumers with a link.
 
-    ```
-    sf package version create --path force-app --installation-key test1234 --wait 10 --target-dev-hub DevHub
-    ```
-    ```
-    sf package version create --path force-app --installation-key-bypass --wait 10 --target-dev-hub DevHub
-    ```
+```
+sf package version create --path force-app --installation-key test1234 --wait 10 --target-dev-hub DevHub
+```
+```
+sf package version create --path force-app --installation-key-bypass --wait 10 --target-dev-hub DevHub
+```
 
-    This can take up to 10 minutes.
+This can take up to 10 minutes.
 
-    NOTE: the installation key is a password added to the package so not anyone can install it. We don't generally need to use it.
+NOTE: the installation key is a password added to the package so not anyone can install it. We don't generally need to use it.
 
-    This can then be installed using the link that is given to you, something like: 
-    ```
-    https://test.salesforce.com/packaging/installPackage.apexp?p0=04t...
-    ```
+This can then be installed using the link that is given to you, something like: 
+```
+https://test.salesforce.com/packaging/installPackage.apexp?p0=04t...
+```
 
 #### Promote a Beta Version
 
