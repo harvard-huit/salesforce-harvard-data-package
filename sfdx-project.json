@@ -7,7 +7,7 @@
       "versionName": "ver 1.0.0",
       "versionNumber": "1.0.0.NEXT",
       "dependencies": [],
-      "versionDescription": "HUD Version 1.0.0"
+      "versionDescription": "Harvard University Data Version 1.0.0"
     }
   ],
   "name": "HUD",
@@ -17,6 +17,7 @@
   "packageAliases": {
     "HUD": "0HoHn000000PAwZKAW",
     "HUD@0.1.0-1": "04tHn000000yVzTIAU",
-    "HUD@1.0.0-1": "04tHn000000yVzYIAU"
+    "HUD@1.0.0-1": "04tHn000000yVzYIAU",
+    "HUD@1.0.0-2": "04tHn000000yWC1IAM"
   }
 }

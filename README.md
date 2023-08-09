@@ -28,13 +28,13 @@ There is no defined best practice for case on either namespace or package, howev
 
 ### Namespace Details
 
-Host: `harvarduniversity68-dev-ed.develop.my.salesforce.com`
-User: `huit_namespace@harvard.edu`
+ - Host: `harvarduniversity68-dev-ed.develop.my.salesforce.com`
+ - User: `huit_namespace@harvard.edu`
 
 ## Dev Hub
 
-Host: `https://harvarduniverstiy-dev-ed.develop.my.salesforce.com`
-User: `hud_package@harvard.edu`
+ - Host: `https://harvarduniverstiy-dev-ed.develop.my.salesforce.com`
+ - User: `hud_package@harvard.edu`
 
 ## Development Setup Steps
 
