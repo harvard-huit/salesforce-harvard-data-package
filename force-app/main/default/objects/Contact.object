@@ -8,11 +8,11 @@
         <type>Text</type>
     </fields>
     <fields>
-        <fullName>Fetch_Fail__c</fullName>
+        <fullName>Updated__c</fullName>
         <externalId>false</externalId>
-        <label>HUIT Fetch Fail</label>
-        <inlineHelpText>This will be checked if HUD returned no data for this record.</inlineHelpText>
+        <label>HUIT Updated</label>
+        <inlineHelpText>If this record fails to be found by HUD, it will return false.</inlineHelpText>
         <type>Checkbox</type>
-        <defaultValue>false</defaultValue>
+        <defaultValue>true</defaultValue>
     </fields>
 </CustomObject>
