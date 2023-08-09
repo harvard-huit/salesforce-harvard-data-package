@@ -13,6 +13,7 @@
         <fullName>Message__c</fullName>
         <externalId>false</externalId>
         <label>Message</label>
+        <length>2000</length>
         <type>TextArea</type>
     </fields>
     <fields>
