@@ -13,14 +13,22 @@
         <fullName>Message__c</fullName>
         <externalId>false</externalId>
         <label>Message</label>
-        <length>2000</length>
-        <type>TextArea</type>
+        <length>10000</length>
+        <type>LongTextArea</type>
+        <visibleLines>30</visibleLines>
     </fields>
     <fields>
         <fullName>Datetime__c</fullName>
         <externalId>false</externalId>
         <label>Datetime</label>
         <type>DateTime</type>
+    </fields>
+    <fields>
+        <fullName>RunId__c</fullName>
+        <externalId>false</externalId>
+        <label>Run Id</label>
+        <length>255</length>
+        <type>Text</type>
     </fields>
     <fields>
         <fullName>Source__c</fullName>
@@ -30,9 +38,9 @@
         <type>Text</type>
     </fields>
     <fields>
-        <fullName>Type__c</fullName>
+        <fullName>Level__c</fullName>
         <externalId>false</externalId>
-        <label>Type</label>
+        <label>Level</label>
         <length>255</length>
         <type>Text</type>
     </fields>

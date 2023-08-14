@@ -11,6 +11,9 @@ Please see [this project](https://github.huit.harvard.edu/HUIT/salesforce-huda-p
 
 </details>
 
+## TODO: Installation Instructions
+
+
 ## Namespace: `huit`
 
 The Namespace Org is a Developer Org that controls the use of the `huit` namespace, which is a prefix added to all custom components (objects, classes, fields, etc) contained in the package. 
@@ -128,14 +131,30 @@ sf package install --package 0Ho... --target-org HarvardDataScratch
 <details>
 <summary>Create an *Unversioned* Managed package</summary>
 
-This is generally unnecessay.
+This is generally unnecessay (moving forward). 
 
-A managed package created this way (without versioning it) will create a reference to a package that won't be available through Salesforce. This package cannot be installed, but is needed as a base package for further versioned packages. This was only needed the first time the package was created and as long as you have access to the Dev Hub it was assigned to, you shouldn't need to do it again.
+A managed package created this way (without versioning it) will create a reference to a package that won't be available through Salesforce. This package cannot be installed, but is needed as a base package for further versioned packages. This was needed the first time the package was created.
 
 ```
 sf package create --name HUD --description "HUD Managed" --path force-app --package-type Managed --target-dev-hub DevHub
 ```
+
 </details>
+
+### Create an Unlocked Package
+
+This can be useful in development/testing phases as Versioned Managed packages have a daily build limit. These are specifically useful for testing post install or uninstall scripts.
+
+```
+sf package create --name HUDX --description "HUD Unlocked" --path force-app --package-type Unlocked --target-dev-hub DevHub
+```
+
+0HoHn000000PAweKAG
+This will produce an 0Ho id. Install the package:
+```
+sf package install --package 0Ho... --target-org Connector --target-dev-hub DevHub --wait 10 
+```
+
 
 ### Get the current package id
 
@@ -183,7 +202,6 @@ Using `ancestorVersion` and setting it to "HIGHEST" is the preferrable way to de
 
 
 </details>
-
 
 ### Creating a (Beta) Versioned Package:
 A versioned package will push the package to a salesforce cloud location that can be retrieved by consumers with a link.
