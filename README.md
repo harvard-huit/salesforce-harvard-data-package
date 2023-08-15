@@ -11,8 +11,30 @@ Please see [this project](https://github.huit.harvard.edu/HUIT/salesforce-huda-p
 
 </details>
 
-## TODO: Installation Instructions
+## Installation Instructions
 
+Installation is currently done through linking to a versioned package (details on the below). The current installation url should be found in the most recent [release](https://github.huit.harvard.edu/HUIT/salesforce-harvard-data-package/releases). 
+
+### What is Installed
+
+#### Log Object
+
+`huit__Log__c` ("HUIT Log") is a new object. This will be populated with logs coming from the python component ([HUIT/salesforce-person-updates](https://github.huit.harvard.edu/HUIT/salesforce-person-updates)) of this service. 
+
+#### Contact Additions
+
+ - `Contact.huit__Pronouns__c` ("HUIT Pronouns") is a free-form text field populated with the newly available pronouns available through the PDS.
+ - `Contact.huit__Updated__c` ("HUIT Updated") is a `checkbox`/`boolean` field populated with `true` when the Contact is available through the currenlt instance's person visibility. 
+
+#### Post Install Apex
+
+This is mainly to start the cleanup action for `huit__Log__c`. Logs older than 30 days are removed. This can be stopped in Scheduled Jobs, however, if there isn't a cleanup, this will fill up "forever". 
+
+The post install will also removed old HUDA Scheduled Jobs. 
+
+#### Uninstall Apex
+
+This is just a cleanup for the Log cleanup Scheduled Job. 
 
 ## Namespace: `huit`
 
@@ -34,7 +56,7 @@ There is no defined best practice for case on either namespace or package, howev
  - Host: `harvarduniversity68-dev-ed.develop.my.salesforce.com`
  - User: `huit_namespace@harvard.edu`
 
-## Dev Hub
+## Dev Hub Details
 
  - Host: `https://harvarduniverstiy-dev-ed.develop.my.salesforce.com`
  - User: `hud_package@harvard.edu`
