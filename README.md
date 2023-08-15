@@ -32,6 +32,27 @@ This is mainly to start the cleanup action for `huit__Log__c`. Logs older than 3
 
 The post install will also removed old HUDA Scheduled Jobs. 
 
+<details>
+
+<summary>
+HUDA Scheduled Jobs List
+</summary>
+
+ - `HUDJobSelfScheduleNameToUpdateAccount`
+ - `HedJobContactEmailUpdate`
+ - `HILTJobSelfScheduleConstituent`
+ - `HUJobSelfContactAccountFieldUpdate`
+ - `Self Schedule Location Mapping`
+ - `Self Schedule HUJobSelfServiceNowUpdate`
+ - `Self Schedule HUSelfScheduledJobNewContactValid`
+ - `Self Schedule HUJobSelfServiceNowCleanup`
+ - `Self Schedule Phone Mapping`
+ - `Self Schedule Email Mapping`
+ - `Self Schedule Address Mapping`
+ - `Self Schedule Name Mapping`
+
+</details>
+
 #### Uninstall Apex
 
 This is just a cleanup for the Log cleanup Scheduled Job. 
