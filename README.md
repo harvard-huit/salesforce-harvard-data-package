@@ -121,6 +121,11 @@ sf org:create:scratch -f config/project-scratch-def.json -a HarvardDataScratch
 
 Note: this can take 2-10 minutes
 
+If you want to switch your default target org:
+```
+sf config set target-org=HarvardDataScratch
+```
+
 ### Generate or display a password (optional)
 This may be needed to log into a scratch org, but is not strictly necessay. (`sf org:open` should also be usable for this)
 ```

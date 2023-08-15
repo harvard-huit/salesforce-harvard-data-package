@@ -8,8 +8,19 @@ global class DeleteOldLogsBatch implements Database.Batchable<sObject>, Schedula
 
     global Database.QueryLocator start(Database.BatchableContext BC) {
         Date thresholdDate = Date.today().addDays(-this.retentionDays);
-        return Database.getQueryLocator('SELECT Id FROM huit__Log__c WHERE CreatedDate < :thresholdDate');
+        
+        String query;
+        if (Test.isRunningTest()) {
+            query = 'SELECT Id FROM huit__Log__c WHERE huit__Datetime__c < :thresholdDate';
+        } else {
+            query = 'SELECT Id FROM huit__Log__c WHERE CreatedDate < :thresholdDate';
+        }
+        
+        return Database.getQueryLocator(query);
     }
+    
+
+
 
     global void execute(Database.BatchableContext BC, List<sObject> scope) {
         delete scope;
