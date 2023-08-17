@@ -8,8 +8,12 @@ global class PostInstallScript implements InstallHandler {
         
         // List of old HUDA jobs
         List<String> jobNames = new List<String>{
+            'HUDJobSelfScheduleNameToUpdateContact',
+            'HUDJobSelfNameToUpdateContactForEPPN',
             'HUDJobSelfScheduleNameToUpdateAccount',
+            'HUDJobSelfScheduleName',
             'HedJobContactEmailUpdate',
+            'HEDJobSelfScheduleAffiliation',
             'HILTJobSelfScheduleConstituent',
             'HUJobSelfContactAccountFieldUpdate',
             'Self Schedule Location Mapping',
