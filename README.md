@@ -116,7 +116,7 @@ sfdx force:project:create -n "name of project"
 
 c. create scratch org
 ```
-sf org:create:scratch -f config/project-scratch-def.json -a HarvardDataScratch
+sf org create scratch -f config/project-scratch-def.json -a HarvardDataScratch
 ```
 
 Note: this can take 2-10 minutes
@@ -197,7 +197,6 @@ This can be useful in development/testing phases as Versioned Managed packages h
 sf package create --name HUDX --description "HUD Unlocked" --path force-app --package-type Unlocked --target-dev-hub DevHub
 ```
 
-0HoHn000000PAweKAG
 This will produce an 0Ho id. Install the package:
 ```
 sf package install --package 0Ho... --target-org Connector --target-dev-hub DevHub --wait 10 
@@ -231,15 +230,15 @@ Using `ancestorVersion` and setting it to "HIGHEST" is the preferrable way to de
       "path": "force-app",
       "default": true,
       "package": "hud",
-      "versionName": "v2.0",
-      "versionNumber": "2.0.NEXT",
+      "versionName": "v1.0.0",
+      "versionNumber": "1.0.0.NEXT",
       "ancestorVersion": "HIGHEST"
     }
   ],
   "name": "HUD",
   "namespace": "huit",
   "sfdcLoginUrl": "https://login.salesforce.com",
-  "sourceApiVersion": "57.0",
+  "sourceApiVersion": "58.0",
   "packageAliases": {
     "hud": "0Ho...",
     "hud@1.0": "04t..."
@@ -278,6 +277,20 @@ In order to create a release version, after testing is done on the Beta version,
 ```
 sf package version promote --package 04t...
 ```
+
+#### Testing
+
+In order to promote, the test coverage needs to be at least 75%. 
+
+In order to test, the best way is to:
+ - Create a scratch org: `sf org create scratch -f config/project-scratch-def.json -a HarvardDataScratch`
+ - Push source code to the scratch org: `sf project deploy start`
+   - (this will tell you if there's any errors)
+ - Run tests: `sf apex run tests --synchronous --code-coverage`
+   - (this will tell you the total code coverage)
+
+Only after the coverage reaches 75% will the `sf package version promote` command work.
+
 
 ### Updating the Package Description 
 
