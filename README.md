@@ -7,7 +7,7 @@ This repository should get you set up with being able to deploy the HUD package.
 <details>
 <summary>Old HUDA and EDA Information</summary>
 
-Please see [this project](https://github.huit.harvard.edu/HUIT/salesforce-huda-package) for more information on HUDA and EDA, the precuror packages to this.
+Please see [this project](https://github.huit.harvard.edu/HUIT/salesforce-huda-package) for more information on HUDA and EDA, the precursor packages to this.
 
 </details>
 
@@ -63,7 +63,7 @@ The Namespace Org is a Developer Org that controls the use of the `huit` namespa
 
 This cannot be (easily) transferred to other orgs and only one namespace can be assigned to each org.
 
-This also cannot also act as a Dev Hub for package management and development. It is impossible to assingn a namespace and enable Dev Hub settings on the same org. Both are needed for development.
+This also cannot also act as a Dev Hub for package management and development. It is impossible to assign a namespace and enable Dev Hub settings on the same org. Both are needed for development.
 
 <details>
 <summary>Note on Namespace and Package case</summary>
@@ -84,21 +84,21 @@ There is no defined best practice for case on either namespace or package, howev
 
 ## Development Setup Steps
 
-NOTE: This is a "second generation package", which generally means development and deployment are done through the sfdc-cli, available here: [https://developer.salesforce.com/docs/atlas.en-us.sfdx_setup.meta/sfdx_setup/sfdx_setup_install_cli.htm]
+NOTE: This is a "second generation package", which generally means development and deployment are done through the sfdc-cli, available [here](https://developer.salesforce.com/docs/atlas.en-us.sfdx_setup.meta/sfdx_setup/sfdx_setup_install_cli.htm).
 
 NOTE: You can see what orgs your sfdx environment is currently using with `sf org:list`. That will show your dev hub and any sandboxes or scratch orgs. 
 
 ### 1. Create a Dev Hub from a Developer org
-  a. sign up for a developer org, these are free and unaffiliated with your other orgs
-  b. turn on Dev Hub under settings -> Development -> Dev Hub
-  c. wait like 20 minutes
+- a. sign up for a developer org, these are free and unaffiliated with your other orgs
+- b. turn on Dev Hub under settings -> Development -> Dev Hub
+- c. wait like 20 minutes
 
 ### 2. Register the Namespace
 
 This is only needed if the project uses a namespace -- the HUDA project does use the HUDA namespace. 
-  a. log in to the Dev Hub Developer Org
-  b. navigate to the Namespace Registry (this will only show if the Dev Hub is enabled and you've waited long enough)
-  c. Link Namespace and log in to a registry holder, in this case it would be the `hudapackage1@harvard.edu` (or another linked account) user and accept
+- a. log in to the Dev Hub Developer Org
+- b. navigate to the Namespace Registry (this will only show if the Dev Hub is enabled and you've waited long enough)
+- c. Link Namespace and log in to a registry holder, in this case it would be the `hudapackage1@harvard.edu` (or another linked account) user and accept
 
 ### 3. Create a scratch org
 a. designate a dev hub
@@ -126,7 +126,7 @@ If you want to switch your default target org:
 sf config set target-org=HarvardDataScratch
 ```
 
-### Generate or display a password (optional)
+#### Generate or display a password (optional)
 This may be needed to log into a scratch org, but is not strictly necessay. (`sf org:open` should also be usable for this)
 ```
 sf force:user:password:generate --target-org HarvardDataScratch
@@ -152,7 +152,7 @@ sf package:installed:list --target-org HarvardDataScratch
 
 You may need to delete the existing hud due to conflicts. This is best done through the Salesforce interface, settings -> installed packages, but you can use:
 ```
-sf package:uninstall --target-org HarvardDataScratch --pacakge <package id>
+sf package:uninstall --target-org HarvardDataScratch --package <package id>
 ```
 
 #### Error with installing packages: `resource not found`
