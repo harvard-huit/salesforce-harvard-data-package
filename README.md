@@ -257,12 +257,14 @@ A versioned package will push the package to a salesforce cloud location that ca
 sf package version create --path force-app --installation-key test1234 --wait 10 --target-dev-hub DevHub
 ```
 ```
-sf package version create --path force-app --installation-key-bypass --wait 10 --target-dev-hub DevHub
+sf package version create --path force-app --code-coverage --installation-key-bypass --wait 10 --target-dev-hub DevHub
 ```
 
 This can take up to 10 minutes.
 
 NOTE: the installation key is a password added to the package so not anyone can install it. We don't generally need to use it.
+
+NOTE: `--code-coverage` is needed if you want to promote the package. 
 
 This can then be installed using the link that is given to you, something like: 
 ```
@@ -284,9 +286,9 @@ In order to promote, the test coverage needs to be at least 75%.
 
 In order to test, the best way is to:
  - Create a scratch org: `sf org create scratch -f config/project-scratch-def.json -a HarvardDataScratch`
- - Push source code to the scratch org: `sf project deploy start`
+ - Push source code to the scratch org: `sf project deploy start --target-org HarvardDataScratch`
    - (this will tell you if there's any errors)
- - Run tests: `sf apex run tests --synchronous --code-coverage`
+ - Run tests: `sf apex run test --synchronous --code-coverage --target-org HarvardDataScratch`
    - (this will tell you the total code coverage)
 
 Only after the coverage reaches 75% will the `sf package version promote` command work.
