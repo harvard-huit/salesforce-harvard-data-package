@@ -1,10 +1,12 @@
 global class PostInstallScript implements InstallHandler {
     global void onInstall(InstallContext context) {
-        Integer desiredRetentionDays = 90; // default of 90 days
-        DeleteOldLogsBatch batchJob = new DeleteOldLogsBatch(desiredRetentionDays);
-        String cron = '0 0 1 * * ?'; // Every day at 1 AM
-        System.schedule('Delete Old HUIT Logs', cron, batchJob);
 
+        if(!isJobScheduled('Delete Old HUIT Logs')) {
+            Integer desiredRetentionDays = 90; // default of 90 days
+            DeleteOldLogsBatch batchJob = new DeleteOldLogsBatch(desiredRetentionDays);
+            String cron = '0 0 1 * * ?'; // Every day at 1 AM
+            System.schedule('Delete Old HUIT Logs', cron, batchJob);
+        }
         
         // List of old HUDA jobs
         List<String> jobNames = new List<String>{
@@ -27,13 +29,16 @@ global class PostInstallScript implements InstallHandler {
             'Self Schedule HUJobSelfServiceNowUpdateForObjectList'
         };
 
-        // Loop through each job name and attempt to delete it
+        // Loop through each job name and attempt to delete it if it's scheduled
         for (String jobName : jobNames) {
-            deleteExistingScheduledJob(jobName);
+            if(isJobScheduled(jobName)) {
+                deleteExistingScheduledJob(jobName);
+            }
         }
 
 
     }
+
     
 
     private void deleteExistingScheduledJob(String jobName) {
@@ -55,5 +60,15 @@ global class PostInstallScript implements InstallHandler {
         }
     }
 
+    private Boolean isJobScheduled(String jobName) {
+        List<CronTrigger> jobs = [
+            SELECT Id FROM CronTrigger 
+            WHERE CronJobDetail.Name = :jobName + '%' LIMIT 1
+        ];
+        return !jobs.isEmpty();
+    }
 
+
+
+    
 }
