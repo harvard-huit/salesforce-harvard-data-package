@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fields>
+        <fullName>Pronouns__c</fullName>
+        <externalId>false</externalId>
+        <label>HUIT Pronouns</label>
+        <length>255</length>
+        <type>Text</type>
+    </fields>
+    <fields>
+        <fullName>Updated__c</fullName>
+        <externalId>false</externalId>
+        <label>HUIT Updated</label>
+        <inlineHelpText>If this record fails to be found by HUD, it will return false.</inlineHelpText>
+        <type>Checkbox</type>
+        <defaultValue>true</defaultValue>
+    </fields>
+</CustomObject>

@@ -1,0 +1,14 @@
+{
+  "orgName": "Harvard University",
+  "edition": "Developer",
+  "features": ["EnableSetPasswordInApi"],
+  "namespace": "huit",
+  "settings": {
+    "lightningExperienceSettings": {
+      "enableS1DesktopEnabled": true
+    },
+    "mobileSettings": {
+      "enableS1EncryptedStoragePref2": false
+    }
+  }
+}
