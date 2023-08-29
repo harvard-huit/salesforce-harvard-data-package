@@ -19,14 +19,10 @@ global class PostInstallScript implements InstallHandler {
             'HILTJobSelfScheduleConstituent',
             'HUJobSelfContactAccountFieldUpdate',
             'Self Schedule Location Mapping',
-            'Self Schedule HUJobSelfServiceNowUpdate',
-            'Self Schedule HUSelfScheduledJobNewContactValid',
-            'Self Schedule HUJobSelfServiceNowCleanup',
             'Self Schedule Phone Mapping',
             'Self Schedule Email Mapping',
             'Self Schedule Address Mapping',
             'Self Schedule Name Mapping',
-            'Self Schedule HUJobSelfServiceNowUpdateForObjectList'
         };
 
         // Loop through each job name and attempt to delete it if it's scheduled
