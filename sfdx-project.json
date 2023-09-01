@@ -4,10 +4,10 @@
       "path": "force-app",
       "default": true,
       "package": "HUD",
-      "versionName": "v1.0.0",
-      "versionNumber": "1.0.0.NEXT",
+      "versionName": "v1.1.0",
+      "versionNumber": "1.1.0.NEXT",
       "dependencies": [],
-      "versionDescription": "Harvard University Data Version 1.0.0",
+      "versionDescription": "Harvard University Data Version 1.1",
       "postInstallScript": "PostInstallScript",
       "uninstallScript": "UninstallScript",
       "ancestorVersion": "HIGHEST"

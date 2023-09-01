@@ -35,8 +35,6 @@ global class PostInstallScript implements InstallHandler {
 
     }
 
-    
-
     private void deleteExistingScheduledJob(String jobName) {
         try {
             // Query for the scheduled job
@@ -64,7 +62,37 @@ global class PostInstallScript implements InstallHandler {
         return !jobs.isEmpty();
     }
 
+    private void deleteInvalidAffiliations() {
+        // Check if hed__Affiliation__c object exists
+        if (Schema.getGlobalDescribe().containsKey('hed__Affiliation__c')) {
+            
+            // Check if HUDA__hud_ROLE_ID__c field exists in hed__Affiliation__c object
+            Map<String, Schema.SObjectField> fieldMap = Schema.getGlobalDescribe().get('hed__Affiliation__c').getDescribe().fields.getMap();
+            if (fieldMap.containsKey('HUDA__hud_ROLE_ID__c')) {
+                
+                try {
+                    // Query for the hed__Affiliation__c records that meet the criteria
+                    List<SObject> affiliationsToDelete = [
+                        SELECT Id 
+                        FROM hed__Affiliation__c 
+                        WHERE hed__Contact__c = null 
+                        AND HUDA__hud_ROLE_ID__c != null
+                    ];
+                    
+                    // Delete those records
+                    if (affiliationsToDelete.size() > 0) {
+                        delete affiliationsToDelete;
+                    }
+                    
+                } catch (Exception e) {
+                    System.debug('Error occurred while deleting affiliations: ' + e.getMessage());
+                }
+            } else {
+                System.debug('Field HUDA__hud_ROLE_ID__c does not exist in hed__Affiliation__c object.');
+            }
+        } else {
+            System.debug('Object hed__Affiliation__c does not exist.');
+        }
+    }
 
-
-    
 }
