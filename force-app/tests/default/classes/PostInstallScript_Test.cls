@@ -10,42 +10,54 @@ private class PostInstallScript_Test {
   }
   
   static testMethod void testDeleteOrphanAffiliations() {
-    // Create a test contact
-    Contact testContact = new Contact(
-        FirstName = 'Test',
-        LastName = 'Contact',
-        Email = 'testcontact@example.com' 
-    );
-    insert testContact;
+    // Check if hed__Affiliation__c object and the fields exist
+    if (Schema.getGlobalDescribe().containsKey('hed__Affiliation__c') && 
+        Schema.getGlobalDescribe().get('hed__Affiliation__c').getDescribe().fields.getMap().containsKey('HUDA__hud_ROLE_ID__c')) {
 
-    // Test data setup for hed__Affiliation__c
+        // Create a test contact
+        Contact testContact = new Contact(
+            FirstName = 'Test',
+            LastName = 'Contact',
+            Email = 'testcontact@example.com'
+        );
+        insert testContact;
 
-    // 1. Record with null hed__Contact__c and non-null HUDA__hud_ROLE_ID__c
-    hed__Affiliation__c affiliation1 = new hed__Affiliation__c();
-    affiliation1.HUDA__hud_ROLE_ID__c = 'testRoleID1';
+        // Dynamically create and insert hed__Affiliation__c records
+        List<SObject> affiliations = new List<SObject>();
 
-    // 2. Record with valid hed__Contact__c and non-null HUDA__hud_ROLE_ID__c
-    hed__Affiliation__c affiliation2 = new hed__Affiliation__c();
-    affiliation2.hed__Contact__c = testContact.Id;
-    affiliation2.HUDA__hud_ROLE_ID__c = 'testRoleID2';
+        SObject affiliation1 = Schema.getGlobalDescribe().get('hed__Affiliation__c').newSObject();
+        affiliation1.put('HUDA__hud_ROLE_ID__c', 'testRoleID1');
+        affiliations.add(affiliation1);
 
-    // 3. Record with null hed__Contact__c and null HUDA__hud_ROLE_ID__c
-    hed__Affiliation__c affiliation3 = new hed__Affiliation__c();
+        SObject affiliation2 = Schema.getGlobalDescribe().get('hed__Affiliation__c').newSObject();
+        affiliation2.put('hed__Contact__c', testContact.Id);
+        affiliation2.put('HUDA__hud_ROLE_ID__c', 'testRoleID2');
+        affiliations.add(affiliation2);
 
-    insert new List<hed__Affiliation__c>{affiliation1, affiliation2, affiliation3};
+        SObject affiliation3 = Schema.getGlobalDescribe().get('hed__Affiliation__c').newSObject();
+        affiliations.add(affiliation3);
 
-    // Execute method
-    PostInstallScript postInstall = new PostInstallScript();
-    postInstall.deleteInvalidAffiliations();
+        insert affiliations;
 
-    // Asserts
-    hed__Affiliation__c result1 = [SELECT Id FROM hed__Affiliation__c WHERE Id = :affiliation1.Id LIMIT 1];
-    System.assert(result1 == null, 'Affiliation1 should have been deleted.');
+        // Execute method
+        PostInstallScript postInstall = new PostInstallScript();
+        postInstall.deleteOrphanAffiliations();
 
-    hed__Affiliation__c result2 = [SELECT Id FROM hed__Affiliation__c WHERE Id = :affiliation2.Id LIMIT 1];
-    System.assertNotEquals(null, result2, 'Affiliation2 should not be deleted.');
+        // Asserts
+        List<SObject> results = Database.query('SELECT Id FROM hed__Affiliation__c WHERE Id IN :affiliations');
+        System.assertEquals(2, results.size(), 'There should only be 2 Affiliations left after the deleteOrphanAffiliations method.');
 
-    hed__Affiliation__c result3 = [SELECT Id FROM hed__Affiliation__c WHERE Id = :affiliation3.Id LIMIT 1];
-    System.assertNotEquals(null, result3, 'Affiliation3 should not be deleted.');
+        // Ensure the affiliation with null hed__Contact__c and non-null HUDA__hud_ROLE_ID__c is deleted
+        Boolean foundDeletedAffiliation = false;
+        for (SObject result : results) {
+            if (result.Id == affiliation1.Id) {
+                foundDeletedAffiliation = true;
+                break;
+            }
+        }
+        System.assert(!foundDeletedAffiliation, 'Affiliation1 should have been deleted.');
+    } else {
+        System.debug('Object hed__Affiliation__c or field HUDA__hud_ROLE_ID__c does not exist. Skipping test.');
+    }
   }
 }

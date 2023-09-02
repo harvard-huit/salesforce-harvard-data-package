@@ -22,7 +22,7 @@ global class PostInstallScript implements InstallHandler {
             'Self Schedule Phone Mapping',
             'Self Schedule Email Mapping',
             'Self Schedule Address Mapping',
-            'Self Schedule Name Mapping',
+            'Self Schedule Name Mapping'
         };
 
         // Loop through each job name and attempt to delete it if it's scheduled
@@ -31,6 +31,8 @@ global class PostInstallScript implements InstallHandler {
                 deleteExistingScheduledJob(jobName);
             }
         }
+
+        deleteOrphanAffiliations();
 
 
     }
@@ -62,30 +64,24 @@ global class PostInstallScript implements InstallHandler {
         return !jobs.isEmpty();
     }
 
-    private void deleteInvalidAffiliations() {
-        // Check if hed__Affiliation__c object exists
+    global void deleteOrphanAffiliations() {
+        // Check if hed__Affiliation__c object exists at runtime
         if (Schema.getGlobalDescribe().containsKey('hed__Affiliation__c')) {
             
+            // Dynamic Describe for hed__Affiliation__c
+            Schema.DescribeSObjectResult describeResult = Schema.getGlobalDescribe().get('hed__Affiliation__c').getDescribe();
+            Map<String, Schema.SObjectField> fieldMap = describeResult.fields.getMap();
+    
             // Check if HUDA__hud_ROLE_ID__c field exists in hed__Affiliation__c object
-            Map<String, Schema.SObjectField> fieldMap = Schema.getGlobalDescribe().get('hed__Affiliation__c').getDescribe().fields.getMap();
             if (fieldMap.containsKey('HUDA__hud_ROLE_ID__c')) {
                 
-                try {
-                    // Query for the hed__Affiliation__c records that meet the criteria
-                    List<SObject> affiliationsToDelete = [
-                        SELECT Id 
-                        FROM hed__Affiliation__c 
-                        WHERE hed__Contact__c = null 
-                        AND HUDA__hud_ROLE_ID__c != null
-                    ];
+                // Using dynamic SOQL to prevent compile-time error
+                String soql = 'SELECT Id FROM hed__Affiliation__c WHERE hed__Contact__c = null AND HUDA__hud_ROLE_ID__c != null';
+                List<SObject> affiliationsToDelete = Database.query(soql);
                     
-                    // Delete those records
-                    if (affiliationsToDelete.size() > 0) {
-                        delete affiliationsToDelete;
-                    }
-                    
-                } catch (Exception e) {
-                    System.debug('Error occurred while deleting affiliations: ' + e.getMessage());
+                // Delete those records
+                if (affiliationsToDelete.size() > 0) {
+                    delete affiliationsToDelete;
                 }
             } else {
                 System.debug('Field HUDA__hud_ROLE_ID__c does not exist in hed__Affiliation__c object.');
@@ -94,5 +90,6 @@ global class PostInstallScript implements InstallHandler {
             System.debug('Object hed__Affiliation__c does not exist.');
         }
     }
+    
 
 }
