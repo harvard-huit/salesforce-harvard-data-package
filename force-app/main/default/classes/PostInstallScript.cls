@@ -1,11 +1,15 @@
 global class PostInstallScript implements InstallHandler {
     global void onInstall(InstallContext context) {
-
-        if(!isJobScheduled('Delete Old HUIT Logs')) {
+        
+        try {
+            System.debug('Scheduling Delete Old HUIT Logs batch job');
             Integer desiredRetentionDays = 90; // default of 90 days
             DeleteOldLogsBatch batchJob = new DeleteOldLogsBatch(desiredRetentionDays);
             String cron = '0 0 1 * * ?'; // Every day at 1 AM
             System.schedule('Delete Old HUIT Logs', cron, batchJob);
+            System.debug('Scheduled Delete Old HUIT Logs batch job');
+        } catch (Exception e) {
+            System.debug('Unable to schedule Delete Old HUIT Logs batch job: ' + e.getMessage());
         }
         
         // List of old HUDA jobs
@@ -37,7 +41,7 @@ global class PostInstallScript implements InstallHandler {
 
     }
 
-    private void deleteExistingScheduledJob(String jobName) {
+    public void deleteExistingScheduledJob(String jobName) {
         try {
             // Query for the scheduled job
             CronTrigger job = [
@@ -57,11 +61,20 @@ global class PostInstallScript implements InstallHandler {
     }
 
     private Boolean isJobScheduled(String jobName) {
-        List<CronTrigger> jobs = [
-            SELECT Id FROM CronTrigger 
-            WHERE CronJobDetail.Name = :jobName + '%' LIMIT 1
-        ];
-        return !jobs.isEmpty();
+        try {
+            List<CronTrigger> jobs = [
+                SELECT Id FROM CronTrigger 
+                WHERE CronJobDetail.Name = :jobName + '%' LIMIT 1
+            ];
+            return !jobs.isEmpty();    
+        } catch (QueryException e) {
+            // Handle the exception. It's possible the job might not exist, which is okay.
+            System.debug('Scheduled job not found or another error occurred: ' + e.getMessage());
+            return false;
+        } catch (Exception e) {
+            System.debug('Error with looking for scheduled job: ' + e.getMessage());
+            return false;
+        }
     }
 
     global void deleteOrphanAffiliations() {

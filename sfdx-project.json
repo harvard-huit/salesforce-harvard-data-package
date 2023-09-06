@@ -24,8 +24,7 @@
   "packageAliases": {
     "HUD": "0HoHn000000PAwZKAW",
     "HUD@0.6.0": "04tHn000000yXDKIA2",
-    "HUD@1.0.0-6": "04tHn000000yXcBIAU",
-    "HUD@1.0.0-7": "04tHn000000yXcGIAU",
-    "HUD@1.1.0-1": "04tHn000000yYl6IAE"
+    "HUD@1.0.0": "04tHn000000yXcGIAU",
+    "HUD@1.1.0": "04tHn000000yYpiIAE"
   }
 }

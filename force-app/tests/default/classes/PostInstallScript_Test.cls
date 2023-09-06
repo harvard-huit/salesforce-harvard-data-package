@@ -7,6 +7,14 @@ private class PostInstallScript_Test {
     FROM CronTrigger 
     WHERE CronJobDetail.Name = 'Delete Old HUIT Logs'];
     System.assertEquals(a.size(), 1, 'Scheduled job not found');
+
+    
+    // test again to make sure it doesn't fail if the job already exists
+    Test.testInstall(postinstall, null);
+    List<CronTrigger> b = [SELECT Id, CronExpression, CronJobDetail.Name, State, NextFireTime, PreviousFireTime, TimesTriggered 
+    FROM CronTrigger 
+    WHERE CronJobDetail.Name = 'Delete Old HUIT Logs'];
+    System.assertEquals(b.size(), 1, 'Scheduled job not found');
   }
   
   static testMethod void testDeleteOrphanAffiliations() {
@@ -59,5 +67,20 @@ private class PostInstallScript_Test {
     } else {
         System.debug('Object hed__Affiliation__c or field HUDA__hud_ROLE_ID__c does not exist. Skipping test.');
     }
+  }
+
+  static testMethod void testDeleteExistingScheduledJob() {
+
+    String jobName = 'Delete Old HUIT Logs';
+
+    Test.startTest();
+    PostInstallScript postInstall = new PostInstallScript();
+    postInstall.deleteExistingScheduledJob(jobName);
+    Test.stopTest();
+
+    List<CronTrigger> results = [SELECT Id FROM CronTrigger WHERE CronJobDetail.Name = ':JobName'];
+    System.assertEquals(0, results.size(), jobName + ' should have been deleted.');
+
+
   }
 }
