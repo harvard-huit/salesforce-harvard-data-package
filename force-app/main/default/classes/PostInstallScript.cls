@@ -3,7 +3,7 @@ global class PostInstallScript implements InstallHandler {
         
         try {
             System.debug('Scheduling Delete Old HUIT Logs batch job');
-            Integer desiredRetentionDays = 90; // default of 90 days
+            Integer desiredRetentionDays = 7; // default of 7 days
             DeleteOldLogsBatch batchJob = new DeleteOldLogsBatch(desiredRetentionDays);
             String cron = '0 0 1 * * ?'; // Every day at 1 AM
             System.schedule('Delete Old HUIT Logs', cron, batchJob);
@@ -16,7 +16,6 @@ global class PostInstallScript implements InstallHandler {
         List<String> jobNames = new List<String>{
             'HUDJobSelfScheduleNameToUpdateContact',
             'HUDJobSelfNameToUpdateContactForEPPN',
-            'HUDJobSelfScheduleNameToUpdateAccount',
             'HUDJobSelfScheduleName',
             'HedJobContactEmailUpdate',
             'HEDJobSelfScheduleAffiliation',
@@ -31,13 +30,8 @@ global class PostInstallScript implements InstallHandler {
 
         // Loop through each job name and attempt to delete it if it's scheduled
         for (String jobName : jobNames) {
-            if(isJobScheduled(jobName)) {
-                deleteExistingScheduledJob(jobName);
-            }
+            deleteExistingScheduledJob(jobName);
         }
-
-        deleteOrphanAffiliations();
-
 
     }
 
@@ -57,52 +51,13 @@ global class PostInstallScript implements InstallHandler {
         } catch (QueryException e) {
             // Handle the exception. It's possible the job might not exist, which is okay.
             System.debug('Scheduled job not found or another error occurred: ' + e.getMessage());
-        }
-    }
-
-    private Boolean isJobScheduled(String jobName) {
-        try {
-            List<CronTrigger> jobs = [
-                SELECT Id FROM CronTrigger 
-                WHERE CronJobDetail.Name = :jobName + '%' LIMIT 1
-            ];
-            return !jobs.isEmpty();    
-        } catch (QueryException e) {
-            // Handle the exception. It's possible the job might not exist, which is okay.
-            System.debug('Scheduled job not found or another error occurred: ' + e.getMessage());
-            return false;
         } catch (Exception e) {
-            System.debug('Error with looking for scheduled job: ' + e.getMessage());
-            return false;
+            System.debug('Error with deleting scheduled job: ' + e.getMessage());
         }
-    }
+    }    
 
+    @Deprecated
     global void deleteOrphanAffiliations() {
-        // Check if hed__Affiliation__c object exists at runtime
-        if (Schema.getGlobalDescribe().containsKey('hed__Affiliation__c')) {
-            
-            // Dynamic Describe for hed__Affiliation__c
-            Schema.DescribeSObjectResult describeResult = Schema.getGlobalDescribe().get('hed__Affiliation__c').getDescribe();
-            Map<String, Schema.SObjectField> fieldMap = describeResult.fields.getMap();
-    
-            // Check if HUDA__hud_ROLE_ID__c field exists in hed__Affiliation__c object
-            if (fieldMap.containsKey('HUDA__hud_ROLE_ID__c')) {
-                
-                // Using dynamic SOQL to prevent compile-time error
-                String soql = 'SELECT Id FROM hed__Affiliation__c WHERE hed__Contact__c = null AND HUDA__hud_ROLE_ID__c != null';
-                List<SObject> affiliationsToDelete = Database.query(soql);
-                    
-                // Delete those records
-                if (affiliationsToDelete.size() > 0) {
-                    delete affiliationsToDelete;
-                }
-            } else {
-                System.debug('Field HUDA__hud_ROLE_ID__c does not exist in hed__Affiliation__c object.');
-            }
-        } else {
-            System.debug('Object hed__Affiliation__c does not exist.');
-        }
+        System.debug('deleteOrphanAffiliations is deprecated and no longer does anything.');
     }
-    
-
 }

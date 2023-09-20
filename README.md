@@ -99,11 +99,11 @@ This is only needed if the project uses a namespace -- the HUDA project does use
 ### 3. Create a scratch org
 a. designate a dev hub
 ```
-sfdx org:login:web -d -a DevHub
+sf org login web -d -a DevHub
 ```
 The dev hub should be a Developer Org. It can't be a sandbox. 
 
-Note: you can use `sfdx org:list` to see what you currently have available. You should see a `(D)` next to the Dev Hub you've logged in to.
+Note: you can use `sf org list` to see what you currently have available. You should see a `(D)` next to the Dev Hub you've logged in to.
 
 b. create a new local project (or use an existing one (like this project) and skip this)
 ```
