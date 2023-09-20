@@ -16,3 +16,4 @@ private class PostInstallScript_Test {
     WHERE CronJobDetail.Name = 'Delete Old HUIT Logs'];
     System.assertEquals(b.size(), 1, 'Scheduled job not found');
   }
+}

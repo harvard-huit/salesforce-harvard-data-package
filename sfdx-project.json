@@ -4,10 +4,10 @@
       "path": "force-app",
       "default": true,
       "package": "HUD",
-      "versionName": "v1.1.1",
-      "versionNumber": "1.1.1.NEXT",
+      "versionName": "v1.2.0",
+      "versionNumber": "1.2.0.NEXT",
       "dependencies": [],
-      "versionDescription": "Harvard University Data Version 1.1",
+      "versionDescription": "Harvard University Data Version 1.2",
       "postInstallScript": "PostInstallScript",
       "uninstallScript": "UninstallScript",
       "ancestorVersion": "HIGHEST"
@@ -26,9 +26,6 @@
     "HUD@0.6.0": "04tHn000000yXDKIA2",
     "HUD@1.0.0": "04tHn000000yXcGIAU",
     "HUD@1.1.0": "04tHn000000yYpiIAE",
-    "HUD@1.2.0-1": "04tHn000000yYpnIAE",
-    "HUD@1.2.0-2": "04tHn000000yYpsIAE",
-    "HUD@1.2.0-3": "04tHn000000yYpxIAE",
-    "HUD@1.2.0-4": "04tHn000000yYyIIAU"
+    "HUD@1.2.0": "04tHn000000yaOhIAI"
   }
 }

@@ -56,4 +56,8 @@ global class PostInstallScript implements InstallHandler {
         }
     }    
 
+    @Deprecated
+    global void deleteOrphanAffiliations() {
+        System.debug('deleteOrphanAffiliations is deprecated and no longer does anything.');
+    }
 }
